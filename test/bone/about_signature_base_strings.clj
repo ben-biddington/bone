@@ -1,4 +1,4 @@
-(ns bone.signature-base-string-test
+(ns bone.about-signature-base-strings
   (:import java.lang.String)
   (:require [clojure.test :refer :all]
             [bone.core :refer :all]))
@@ -10,9 +10,11 @@
 ;; All the request parameters MUST be encoded as described in Parameter Encoding;; prior to constructing the Signature Base String.
 
 (defn- signature-base-string[opts]
-  (str (:realm opts)))
+  (str ""))
 
 (deftest normalizing-request-parameters
-  (testing "that it omits realm"
-    (let [result (signature-base-string {:auth-header :realm "http://sp.example.com/"})]
-    (is false (.contains "OAuth"))))
+  (let [result (signature-base-string {:auth-header {:realm "http://sp.example.com/"}})]
+    (testing "that it omits realm"
+      (is (= false (.contains result "realm="))))
+    
+    ))

@@ -1,4 +1,0 @@
-(ns bone.core-test
-  (:require [clojure.test :refer :all]
-            [bone.core :refer :all]))
-
