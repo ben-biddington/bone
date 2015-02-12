@@ -9,12 +9,21 @@
 ;; The HMAC-SHA1 signature method provides both a standard and an example of using the Signature Base String with a signing algorithm to generate signatures. 
 ;; All the request parameters MUST be encoded as described in Parameter Encoding;; prior to constructing the Signature Base String.
 
-(defn- signature-base-string[opts]
-  (str ""))
+(defn- signature-base-string[parameters]
+  (str "oauth_consumer_key=" (-> parameters :auth-header :oauth-consumer-key)))
+
+(def example-parameters
+  {:auth-header 
+   {:realm "http://sp.example.com/" :oauth-consumer-key "0685bd9184jfhq22"}})
+
+(def debug? (= "ON" (System/getenv "LOUD")))
 
 (deftest normalizing-request-parameters
-  (let [result (signature-base-string {:auth-header {:realm "http://sp.example.com/"}})]
+  (let [result (signature-base-string example-parameters)]
     (testing "that it omits realm"
       (is (= false (.contains result "realm="))))
     
+    (testing "that it includes :oauth_consumer_key"
+      (is (= true (.contains result "oauth_consumer_key=0685bd9184jfhq22"))))
+
     ))
