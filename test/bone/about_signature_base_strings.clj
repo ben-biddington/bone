@@ -10,11 +10,21 @@
 ;; All the request parameters MUST be encoded as described in Parameter Encoding;; prior to constructing the Signature Base String.
 
 (defn- signature-base-string[parameters]
-  (str "oauth_consumer_key=" (-> parameters :auth-header :oauth-consumer-key)))
+  (str 
+   "oauth_consumer_key="      (-> parameters :auth-header :oauth-consumer-key)
+   "oauth_token="             (-> parameters :auth-header :oauth-token)
+   "oauth_signature_method="  (-> parameters :auth-header :oauth-signature-method)
+   ))
 
 (def example-parameters
   {:auth-header 
-   {:realm "http://sp.example.com/" :oauth-consumer-key "0685bd9184jfhq22"}})
+   {
+    :realm                  "http://sp.example.com/" 
+    :oauth-consumer-key     "0685bd9184jfhq22"
+    :oauth-token            "ad180jjd733klru7"
+    :oauth-signature-method "HMAC-SHA1"
+    }
+   })
 
 (def debug? (= "ON" (System/getenv "LOUD")))
 
@@ -25,5 +35,11 @@
     
     (testing "that it includes :oauth_consumer_key"
       (is (= true (.contains result "oauth_consumer_key=0685bd9184jfhq22"))))
+
+    (testing "that it includes :oauth_token"
+      (is (= true (.contains result "oauth_token=ad180jjd733klru7"))))
+
+    (testing "that it includes :oauth_signature_method"
+      (is (= true (.contains result "oauth_signature_method=HMAC-SHA1"))))
 
     ))
