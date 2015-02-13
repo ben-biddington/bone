@@ -21,6 +21,7 @@
    "oauth_signature_method="  (% (-> parameters :auth-header :oauth-signature-method))
    "oauth_signature="         (% (-> parameters :auth-header :oauth-signature))
    "oauth_timestamp="         (% (-> parameters :auth-header :oauth-timestamp))
+   "oauth_nonce="             (% (-> parameters :auth-header :oauth-nonce))
    ))
 
 (def example-parameters
@@ -32,6 +33,7 @@
     :oauth-signature-method "HMAC-SHA1"
     :oauth-signature        "wOJIO9A2W5mFwDgiDvZbTSMK/PY="
     :oauth-timestamp        "1423786932"
+    :oauth-nonce            "4572616e48616d6d65724c61686176"
     }
    })
 
@@ -56,5 +58,8 @@
 
     (testing "that it includes :oauth_timestamp"
       (is (= true (.contains result "oauth_timestamp=1423786932"))))
+
+    (testing "that it includes :oauth_nonce"
+      (is (= true (.contains result "oauth_nonce=4572616e48616d6d65724c61686176"))))
 
     ))
