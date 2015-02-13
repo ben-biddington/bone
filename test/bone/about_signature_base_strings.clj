@@ -14,6 +14,8 @@
 
 (defn- %[what] (earl-encode what))
 
+(defn- q[what] (str "\"" what "\""))
+
 (defn- signature-base-string[parameters]
   (str 
    "oauth_consumer_key="      (% (-> parameters :auth-header :oauth-consumer-key))
@@ -22,6 +24,7 @@
    "oauth_signature="         (% (-> parameters :auth-header :oauth-signature))
    "oauth_timestamp="         (% (-> parameters :auth-header :oauth-timestamp))
    "oauth_nonce="             (% (-> parameters :auth-header :oauth-nonce))
+   "oauth_version="           (q(% (-> parameters :auth-header :oauth-version)))
    ))
 
 (def example-parameters
@@ -34,6 +37,7 @@
     :oauth-signature        "wOJIO9A2W5mFwDgiDvZbTSMK/PY="
     :oauth-timestamp        "1423786932"
     :oauth-nonce            "4572616e48616d6d65724c61686176"
+    :oauth-version          "1.0"
     }
    })
 
@@ -53,7 +57,7 @@
     (testing "that it includes :oauth_signature_method"
       (is (= true (.contains result "oauth_signature_method=HMAC-SHA1"))))
 
-    (testing "that it includes :oauth_signature (this also shows we are URL encoding)"
+    (testing "that it includes :oauth_signature"
       (is (= true (.contains result "oauth_signature=wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D"))))
 
     (testing "that it includes :oauth_timestamp"
@@ -62,4 +66,11 @@
     (testing "that it includes :oauth_nonce"
       (is (= true (.contains result "oauth_nonce=4572616e48616d6d65724c61686176"))))
 
+    (testing "that it includes :oauth_version"
+      (is (= true (.contains result "oauth_version=\"1.0\""))))
+
     ))
+
+;; TEST: parameters are url encoded
+;; TEST: parameter values may be empty -- they must still be included
+;;       + what about whitespace?
