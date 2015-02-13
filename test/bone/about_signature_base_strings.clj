@@ -14,11 +14,11 @@
 
 (defn- sort-by-key-and-value[parameters] (into (sorted-map) parameters))
 
-(defn- join-as-string[param]
-  (str (%(key param)) (% "=") (% (val param))))
+(defn- join-as-string[param] (str (%(key param)) (% "=") (% (val param))))
 
-(defn- blacklisted?[item] 
-  (contains? #{"realm" "oauth_signature"} (key item)))
+(def ^{:private true} ignored-parameter-names #{"realm" "oauth_signature"})
+
+(defn- blacklisted? [item] (contains? ignored-parameter-names (key item)))
 
 (defn- white-list[parameters] (filter (complement blacklisted?) parameters))
 
