@@ -14,9 +14,7 @@
 
 (defn- %[what] (earl-encode what))
 
-(defn- q[what] (str "\"" what "\""))
-
-(defn- value[what] (-> (if (nil? what) "" what) % q))
+(defn- value[what] (-> (if (nil? what) "" what) %))
 
 (defn- signature-base-string[parameters]
   (str 
@@ -57,34 +55,35 @@
       (is (= false (.contains result "realm="))))
     
     (testing "that it includes :oauth_consumer_key"
-      (must-contain result "oauth_consumer_key=\"0685bd9184jfhq22\""))
+      (must-contain result "oauth_consumer_key=0685bd9184jfhq22"))
 
     (testing "that it includes :oauth_token"
-      (must-contain result "oauth_token=\"ad180jjd733klru7\""))
+      (must-contain result "oauth_token=ad180jjd733klru7"))
 
     (testing "that it includes :oauth_signature_method"
-      (must-contain result "oauth_signature_method=\"HMAC-SHA1\""))
+      (must-contain result "oauth_signature_method=HMAC-SHA1"))
 
     (testing "that it includes :oauth_signature"
-      (must-contain result "oauth_signature=\"wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D\""))
+      (must-contain result "oauth_signature=wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D"))
 
     (testing "that it includes :oauth_timestamp"
-      (must-contain result "oauth_timestamp=\"1423786932\""))
+      (must-contain result "oauth_timestamp=1423786932"))
 
     (testing "that it includes :oauth_nonce"
-      (must-contain result "oauth_nonce=\"4572616e48616d6d65724c61686176\""))
+      (must-contain result "oauth_nonce=4572616e48616d6d65724c61686176"))
 
     (testing "that it includes :oauth_version"
-      (must-contain result "oauth_version=\"1.0\""))))
+      (must-contain result "oauth_version=1.0"))))
 
 (deftest request-parameter-values-are-parameter-encoded
   (let [result (signature-base-string (example-parameters-with { :oauth-version "/OJI O9A2W5mFwDgiDvZbTSMK/PY=" }))]
     (testing "for example a fictional oauth_version"
-      (must-contain result "oauth_version=\"%2FOJI%20O9A2W5mFwDgiDvZbTSMK%2FPY%3D\""))))
+      (must-contain result "oauth_version=%2FOJI%20O9A2W5mFwDgiDvZbTSMK%2FPY%3D"))))
 
 (deftest request-parameter-values-may-be-empty-and-are-still-included
   (let [result (signature-base-string (example-parameters-with { :oauth-version "" }))]
     (testing "for example a fictional empty oauth_version"
-      (must-contain result "oauth_version=\"\""))))
+      (must-contain result "oauth_version="))))
 
 ;; TEST: parameters are separated by ampersands
+;; TEST: it EXCLUDES oauth_signature
