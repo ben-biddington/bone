@@ -20,19 +20,21 @@
   (into {} (filter (fn[item] (not (.contains (name (key item)) "oauth"))) parameters)))
 
 (defn- extra-parameter-string[extra-parameters]
-  (let [escaped (map (fn[item] ((str (name (key item)) (% "=") (val item))) ) extra-parameters)]))
+  (let [escaped (map (fn[item] ((str (name (key item)) (% "=") (val item)))) extra-parameters)]))
+
+(defn- sort-by-key-and-value[parameters] (into (sorted-map) parameters))
+
+(defn- join-as-string[param]
+  (str (%(key param)) (% "=") (% (val param))))
+
+(defn- blacklisted?[item] 
+  (contains? #{"realm" "oauth_signature"} (key item)))
+
+(defn- white-list[parameters] (filter (complement blacklisted?) parameters))
 
 (defn- signature-base-string[parameters]
-  (let [oauth-parameters (:auth-header parameters)]
-    (str 
-     (p-name "oauth_consumer_key=")      (p-value (get oauth-parameters "oauth_consumer_key"))
-     (p-name "oauth_token=")             (p-value (get oauth-parameters "oauth_token"))
-     (p-name "oauth_signature_method=")  (p-value (get oauth-parameters "oauth_signature_method"))
-     (p-name "oauth_timestamp=")         (p-value (get oauth-parameters "oauth_timestamp"))
-     (p-name "oauth_nonce=")             (p-value (get oauth-parameters "oauth_nonce"))
-     (p-name "oauth_version=")           (p-value (get oauth-parameters "oauth_version"))
-     (extra-parameter-string (without-oauth parameters)))
-    ))
+  (let [sorted-params (sort-by-key-and-value (white-list (:auth-header parameters)))]
+    (clojure.string/join (map join-as-string sorted-params))))
 
 (def example-parameters
   {:auth-header 
