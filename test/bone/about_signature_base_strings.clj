@@ -20,6 +20,7 @@
    "oauth_token="             (% (-> parameters :auth-header :oauth-token))
    "oauth_signature_method="  (% (-> parameters :auth-header :oauth-signature-method))
    "oauth_signature="         (% (-> parameters :auth-header :oauth-signature))
+   "oauth_timestamp="         (% (-> parameters :auth-header :oauth-timestamp))
    ))
 
 (def example-parameters
@@ -30,6 +31,7 @@
     :oauth-token            "ad180jjd733klru7"
     :oauth-signature-method "HMAC-SHA1"
     :oauth-signature        "wOJIO9A2W5mFwDgiDvZbTSMK/PY="
+    :oauth-timestamp        "1423786932"
     }
    })
 
@@ -51,5 +53,8 @@
 
     (testing "that it includes :oauth_signature (this also shows we are URL encoding)"
       (is (= true (.contains result "oauth_signature=wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D"))))
+
+    (testing "that it includes :oauth_timestamp"
+      (is (= true (.contains result "oauth_timestamp=1423786932"))))
 
     ))
