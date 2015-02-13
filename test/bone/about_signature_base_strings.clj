@@ -14,17 +14,25 @@
 
 (defn- %[what] (earl-encode what))
 
-(defn- name [what] (-> what %))
-(defn- value[what] (-> (if (nil? what) "" what) %))
+(defn- p-name [what] (-> what %))
+(defn- p-value[what] (-> (if (nil? what) "" what) %))
+(defn- without-oauth[parameters]
+  (into {} (filter (fn[item] (not (.contains (name (key item)) "oauth"))) parameters)))
+
+(defn- extra-parameter-string[extra-parameters]
+  (let [escaped (map (fn[item] ((str (name (key item)) (% "=") (val item))) ) extra-parameters)])
+)
 
 (defn- signature-base-string[parameters]
   (str 
-   (name "oauth_consumer_key=")      (value (-> parameters :auth-header :oauth-consumer-key))
-   (name "oauth_token=")             (value (-> parameters :auth-header :oauth-token))
-   (name "oauth_signature_method=")  (value (-> parameters :auth-header :oauth-signature-method))
-   (name "oauth_timestamp=")         (value (-> parameters :auth-header :oauth-timestamp))
-   (name "oauth_nonce=")             (value (-> parameters :auth-header :oauth-nonce))
-   (name "oauth_version=")           (value (-> parameters :auth-header :oauth-version))))
+   (p-name "oauth_consumer_key=")      (p-value (-> parameters :auth-header :oauth-consumer-key))
+   (p-name "oauth_token=")             (p-value (-> parameters :auth-header :oauth-token))
+   (p-name "oauth_signature_method=")  (p-value (-> parameters :auth-header :oauth-signature-method))
+   (p-name "oauth_timestamp=")         (p-value (-> parameters :auth-header :oauth-timestamp))
+   (p-name "oauth_nonce=")             (p-value (-> parameters :auth-header :oauth-nonce))
+   (p-name "oauth_version=")           (p-value (-> parameters :auth-header :oauth-version))
+   (extra-parameter-string (without-oauth parameters))
+))
 
 (def example-parameters
   {:auth-header 
@@ -48,6 +56,21 @@
 
 (defn- must-contain[text expected] (is (.contains text expected) (str "Expected <" text "> to include <" expected ">")))
 (defn- must-not-contain[text expected] (is (not (.contains text expected)) (str "Expected <" text "> to exclude <" expected ">")))
+
+(deftest for-example ;; <http://oauth.net/core/1.0a/#sig_base_example>
+  (let [parameters (example-parameters-with { 
+    :oauth-consumer-key "dpf43f3p2l4k3l03" 
+    :oauth-token        "nnch734d00sl2jdk"
+    :oauth-timestamp    "1191242096"
+    :oauth-nonce        "kllo9940pd9333jh"
+    :file               "vacation.jpg"
+    :size               "original"})]
+  (let [result (signature-base-string parameters)]
+    (println (:auth-header parameters))
+    (println (without-oauth (:auth-header parameters)))
+    (println (str "result: " result))
+    ))
+)
 
 (deftest normalizing-request-parameters
   (let [result (signature-base-string example-parameters)]
@@ -84,3 +107,6 @@
   (let [result (signature-base-string (example-parameters-with { :oauth-version "" }))]
     (testing "for example a fictional empty oauth_version"
       (must-contain result "oauth_version%3D"))))
+
+
+;; TEST: parameters must be sorted by name AND value
