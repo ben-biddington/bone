@@ -10,12 +10,7 @@
 ;; The HMAC-SHA1 signature method provides both a standard and an example of using the Signature Base String with a signing algorithm to generate signatures. 
 ;; All the request parameters MUST be encoded as described in Parameter Encoding;; prior to constructing the Signature Base String.
 
-(defn- earl-encode[what] (ring.util.codec/url-encode what))
-
-(defn- %[what] (earl-encode what))
-
-(defn- extra-parameter-string[extra-parameters]
-  (let [escaped (map (fn[item] ((str (name (key item)) (% "=") (val item)))) extra-parameters)]))
+(defn- %[what] (ring.util.codec/url-encode what))
 
 (defn- sort-by-key-and-value[parameters] (into (sorted-map) parameters))
 
