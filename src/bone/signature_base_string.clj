@@ -17,9 +17,8 @@
 (defn- sorted[parameters] (sort-by-key-and-value (white-list parameters)))
 
 (defn signature-base-string[args]
-  (let [sorted-params (sorted (:parameters args))]
     (clojure.string/join ampersand
       (list 
         (% (:verb args))
         (% (:url args))
-        (-> sorted-params name-value-pairs combine)))))
+        (-> (sorted (:parameters args)) name-value-pairs combine))))
