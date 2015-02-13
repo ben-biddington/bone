@@ -12,20 +12,20 @@
 
 (def example-parameters
    {
-    "verb"                   "GET"
-    "url"                    "http://sp.example.com/" 
-    "realm"                  "http://sp.example.com/" 
-    "oauth_consumer_key"     "0685bd9184jfhq22"
-    "oauth_token"            "ad180jjd733klru7"
-    "oauth_signature_method" "HMAC-SHA1"
-    "oauth_signature"        "wOJIO9A2W5mFwDgiDvZbTSMK/PY="
-    "oauth_timestamp"        "1423786932"
-    "oauth_nonce"            "4572616e48616d6d65724c61686176"
-    "oauth_version"          "1.0"
-    })
+    :verb                      "GET"
+    :url                       "http://sp.example.com/" 
+    :parameters {
+      "realm"                  "http://sp.example.com/" 
+      "oauth_consumer_key"     "0685bd9184jfhq22"
+      "oauth_token"            "ad180jjd733klru7"
+      "oauth_signature_method" "HMAC-SHA1"
+      "oauth_signature"        "wOJIO9A2W5mFwDgiDvZbTSMK/PY="
+      "oauth_timestamp"        "1423786932"
+      "oauth_nonce"            "4572616e48616d6d65724c61686176"
+      "oauth_version"          "1.0"
+      }})
 
-(defn- example-parameters-with[replacement-oauth-parameters]
-  (into example-parameters replacement-oauth-parameters))
+(defn- example-parameters-with[replacements] (into example-parameters replacements)) ;; does not seem to merge sub-maps
 
 (def debug? (= "ON" (System/getenv "LOUD")))
 
@@ -35,14 +35,16 @@
 
 (deftest for-example ;; <http://oauth.net/core/1.0a/#sig_base_example>
   (let [parameters (example-parameters-with {
-    "verb"               "GET"
-    "url"                "http://photos.example.net/photos"
-    "oauth_consumer_key" "dpf43f3p2l4k3l03" 
-    "oauth_token"        "nnch734d00sl2jdk"
-    "oauth_timestamp"    "1191242096"
-    "oauth_nonce"        "kllo9940pd9333jh"
-    "file"               "vacation.jpg"
-    "size"               "original"})]
+    :url                       "http://photos.example.net/photos"
+    :parameters { 
+      "oauth_consumer_key"     "dpf43f3p2l4k3l03" 
+      "oauth_token"            "nnch734d00sl2jdk"
+      "oauth_timestamp"        "1191242096"
+      "oauth_nonce"            "kllo9940pd9333jh"
+      "oauth_signature_method" "HMAC-SHA1"
+      "oauth_version"          "1.0"
+      "file"                   "vacation.jpg"
+      "size"                   "original"}})]
 
   (let [result (signature-base-string parameters)]
     (must-equal result (str "GET&http%3A%2F%2Fphotos.example.net%2Fphotos&"
@@ -77,7 +79,7 @@
       (must-contain result "oauth_version%3D1.0"))))
 
 (deftest request-parameter-values-are-parameter-encoded
-  (let [result (signature-base-string (example-parameters-with { "oauth_version" "/OJI O9A2W5mFwDgiDvZbTSMK/PY=" }))]
+  (let [result (signature-base-string (example-parameters-with { :parameters {"oauth_version" "/OJI O9A2W5mFwDgiDvZbTSMK/PY=" }}))]
     (testing "for example a fictional oauth_version"
       (must-contain result "oauth_version%3D%2FOJI%20O9A2W5mFwDgiDvZbTSMK%2FPY%3D"))))
 

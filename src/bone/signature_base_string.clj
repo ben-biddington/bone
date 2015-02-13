@@ -9,7 +9,7 @@
 
 (defn- join-as-string[param] (str (%(key param)) (% "=") (% (val param))))
 
-(def ^{:private true} ignored-parameter-names #{"verb" "url" "realm" "oauth_signature"})
+(def ^{:private true} ignored-parameter-names #{"realm" "oauth_signature"})
 
 (defn- blacklisted? [item] (contains? ignored-parameter-names (key item)))
 
@@ -17,10 +17,10 @@
 
 (def ^{:private true} ampersand "&")
 
-(defn signature-base-string[parameters]
-  (let [sorted-params (sort-by-key-and-value (white-list parameters))]
+(defn signature-base-string[args]
+  (let [sorted-params (sort-by-key-and-value (white-list (:parameters args)))]
     (clojure.string/join ampersand
       (list 
-        (% (get parameters "verb"))
-        (% (get parameters "url"))
+        (% (:verb args))
+        (% (:url args))
         (clojure.string/join (% "&") (map join-as-string sorted-params))))))
