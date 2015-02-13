@@ -17,10 +17,7 @@
 (defn- q[what] (str "\"" what "\""))
 
 (defn- value[what] 
-  (q (% (
-    if (nil? what) 
-    ""
-    what))))
+  (-> (if (nil? what) "" what) % q))
 
 (defn- signature-base-string[parameters]
   (str 
