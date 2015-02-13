@@ -14,11 +14,10 @@
 (defn- blacklisted? [item] (contains? ignored-parameter-names (key item)))
 (defn- white-list[parameters] (filter (complement blacklisted?) parameters))
 (defn- combine[name-value-pairs] (clojure.string/join url-encoded-ampersand name-value-pairs))
-(defn- sorted[parameters] (sort-by-key-and-value (white-list parameters)))
 
 (defn signature-base-string[args]
     (clojure.string/join ampersand
       (list 
-        (% (:verb args))
-        (% (:url args))
-        (-> (sorted (:parameters args)) name-value-pairs combine))))
+        (-> :verb       args %)
+        (-> :url        args %)
+        (-> :parameters args white-list sort-by-key-and-value name-value-pairs combine))))
