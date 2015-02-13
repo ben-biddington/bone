@@ -20,31 +20,31 @@
   (into {} (filter (fn[item] (not (.contains (name (key item)) "oauth"))) parameters)))
 
 (defn- extra-parameter-string[extra-parameters]
-  (let [escaped (map (fn[item] ((str (name (key item)) (% "=") (val item))) ) extra-parameters)])
-)
+  (let [escaped (map (fn[item] ((str (name (key item)) (% "=") (val item))) ) extra-parameters)]))
 
 (defn- signature-base-string[parameters]
-  (str 
-   (p-name "oauth_consumer_key=")      (p-value (-> parameters :auth-header :oauth-consumer-key))
-   (p-name "oauth_token=")             (p-value (-> parameters :auth-header :oauth-token))
-   (p-name "oauth_signature_method=")  (p-value (-> parameters :auth-header :oauth-signature-method))
-   (p-name "oauth_timestamp=")         (p-value (-> parameters :auth-header :oauth-timestamp))
-   (p-name "oauth_nonce=")             (p-value (-> parameters :auth-header :oauth-nonce))
-   (p-name "oauth_version=")           (p-value (-> parameters :auth-header :oauth-version))
-   (extra-parameter-string (without-oauth parameters))
-))
+  (let [oauth-parameters (:auth-header parameters)]
+    (str 
+     (p-name "oauth_consumer_key=")      (p-value (get oauth-parameters "oauth_consumer_key"))
+     (p-name "oauth_token=")             (p-value (get oauth-parameters "oauth_token"))
+     (p-name "oauth_signature_method=")  (p-value (get oauth-parameters "oauth_signature_method"))
+     (p-name "oauth_timestamp=")         (p-value (get oauth-parameters "oauth_timestamp"))
+     (p-name "oauth_nonce=")             (p-value (get oauth-parameters "oauth_nonce"))
+     (p-name "oauth_version=")           (p-value (get oauth-parameters "oauth_version"))
+     (extra-parameter-string (without-oauth parameters)))
+    ))
 
 (def example-parameters
   {:auth-header 
    {
-    :realm                  "http://sp.example.com/" 
-    :oauth-consumer-key     "0685bd9184jfhq22"
-    :oauth-token            "ad180jjd733klru7"
-    :oauth-signature-method "HMAC-SHA1"
-    :oauth-signature        "wOJIO9A2W5mFwDgiDvZbTSMK/PY="
-    :oauth-timestamp        "1423786932"
-    :oauth-nonce            "4572616e48616d6d65724c61686176"
-    :oauth-version          "1.0"
+    "realm"                  "http://sp.example.com/" 
+    "oauth_consumer_key"     "0685bd9184jfhq22"
+    "oauth_token"            "ad180jjd733klru7"
+    "oauth_signature_method" "HMAC-SHA1"
+    "oauth_signature"        "wOJIO9A2W5mFwDgiDvZbTSMK/PY="
+    "oauth_timestamp"        "1423786932"
+    "oauth_nonce"            "4572616e48616d6d65724c61686176"
+    "oauth_version"          "1.0"
     }
    })
 
@@ -59,12 +59,12 @@
 
 (deftest for-example ;; <http://oauth.net/core/1.0a/#sig_base_example>
   (let [parameters (example-parameters-with { 
-    :oauth-consumer-key "dpf43f3p2l4k3l03" 
-    :oauth-token        "nnch734d00sl2jdk"
-    :oauth-timestamp    "1191242096"
-    :oauth-nonce        "kllo9940pd9333jh"
-    :file               "vacation.jpg"
-    :size               "original"})]
+    "oauth_consumer_key" "dpf43f3p2l4k3l03" 
+    "oauth_token"        "nnch734d00sl2jdk"
+    "oauth_timestamp"    "1191242096"
+    "oauth_nonce"        "kllo9940pd9333jh"
+    "file"               "vacation.jpg"
+    "size"               "original"})]
   (let [result (signature-base-string parameters)]
     (println (:auth-header parameters))
     (println (without-oauth (:auth-header parameters)))
@@ -99,12 +99,12 @@
       (must-contain result "oauth_version%3D1.0"))))
 
 (deftest request-parameter-values-are-parameter-encoded
-  (let [result (signature-base-string (example-parameters-with { :oauth-version "/OJI O9A2W5mFwDgiDvZbTSMK/PY=" }))]
+  (let [result (signature-base-string (example-parameters-with { "oauth_version" "/OJI O9A2W5mFwDgiDvZbTSMK/PY=" }))]
     (testing "for example a fictional oauth_version"
       (must-contain result "oauth_version%3D%2FOJI%20O9A2W5mFwDgiDvZbTSMK%2FPY%3D"))))
 
 (deftest request-parameter-values-may-be-empty-and-are-still-included
-  (let [result (signature-base-string (example-parameters-with { :oauth-version "" }))]
+  (let [result (signature-base-string (example-parameters-with { "oauth_version" "" }))]
     (testing "for example a fictional empty oauth_version"
       (must-contain result "oauth_version%3D"))))
 
