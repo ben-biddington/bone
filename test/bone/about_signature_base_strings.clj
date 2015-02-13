@@ -24,7 +24,7 @@
 
 (defn- signature-base-string[parameters]
   (let [sorted-params (sort-by-key-and-value (white-list (:auth-header parameters)))]
-    (clojure.string/join (%"&") (map join-as-string sorted-params))))
+    (clojure.string/join (% "&") (map join-as-string sorted-params))))
 
 (def example-parameters
   {:auth-header 
