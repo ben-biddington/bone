@@ -53,36 +53,38 @@
 
 (def debug? (= "ON" (System/getenv "LOUD")))
 
+(defn- must-contain[text expected] (is (.contains text expected)))
+
 (deftest normalizing-request-parameters
   (let [result (signature-base-string example-parameters)]
     (testing "that it omits realm"
       (is (= false (.contains result "realm="))))
     
     (testing "that it includes :oauth_consumer_key"
-      (is (= true (.contains result "oauth_consumer_key=\"0685bd9184jfhq22\""))))
+      (must-contain result "oauth_consumer_key=\"0685bd9184jfhq22\""))
 
     (testing "that it includes :oauth_token"
-      (is (= true (.contains result "oauth_token=\"ad180jjd733klru7\""))))
+      (must-contain result "oauth_token=\"ad180jjd733klru7\""))
 
     (testing "that it includes :oauth_signature_method"
-      (is (= true (.contains result "oauth_signature_method=\"HMAC-SHA1\""))))
+      (must-contain result "oauth_signature_method=\"HMAC-SHA1\""))
 
     (testing "that it includes :oauth_signature"
-      (is (= true (.contains result "oauth_signature=\"wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D\""))))
+      (must-contain result "oauth_signature=\"wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D\""))
 
     (testing "that it includes :oauth_timestamp"
-      (is (= true (.contains result "oauth_timestamp=\"1423786932\""))))
+      (must-contain result "oauth_timestamp=\"1423786932\""))
 
     (testing "that it includes :oauth_nonce"
-      (is (= true (.contains result "oauth_nonce=\"4572616e48616d6d65724c61686176\""))))
+      (must-contain result "oauth_nonce=\"4572616e48616d6d65724c61686176\""))
 
     (testing "that it includes :oauth_version"
-      (is (= true (.contains result "oauth_version=\"1.0\""))))))
+      (must-contain result "oauth_version=\"1.0\""))))
 
 (deftest request-parameter-values-are-parameter-encoded
   (let [result (signature-base-string (example-parameters-with { :oauth-version "/OJI O9A2W5mFwDgiDvZbTSMK/PY=" }))]
     (testing "for example a fictional oauth_version"
-      (is (= true (.contains result "oauth_version=\"%2FOJI%20O9A2W5mFwDgiDvZbTSMK%2FPY%3D\"")) result ))))
+      (must-contain result "oauth_version=\"%2FOJI%20O9A2W5mFwDgiDvZbTSMK%2FPY%3D\""))))
 
 ;; TEST: parameter values may be empty -- they must still be included
 ;;       + what about whitespace?
