@@ -11,7 +11,6 @@
 ;; All the request parameters MUST be encoded as described in Parameter Encoding;; prior to constructing the Signature Base String.
 
 (def example-parameters
-  {:auth-header 
    {
     "verb"                   "GET"
     "url"                    "http://sp.example.com/" 
@@ -23,12 +22,10 @@
     "oauth_timestamp"        "1423786932"
     "oauth_nonce"            "4572616e48616d6d65724c61686176"
     "oauth_version"          "1.0"
-    }
-   })
+    })
 
 (defn- example-parameters-with[replacement-oauth-parameters]
-  (let [original-values (-> example-parameters :auth-header)]
-    {:auth-header (into original-values replacement-oauth-parameters)}))
+  (into example-parameters replacement-oauth-parameters))
 
 (def debug? (= "ON" (System/getenv "LOUD")))
 

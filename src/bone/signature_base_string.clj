@@ -18,9 +18,9 @@
 (def ^{:private true} ampersand "&")
 
 (defn signature-base-string[parameters]
-  (let [sorted-params (sort-by-key-and-value (white-list (:auth-header parameters)))]
+  (let [sorted-params (sort-by-key-and-value (white-list parameters))]
     (clojure.string/join ampersand
       (list 
-        (% (get-in parameters [:auth-header "verb"]))
-        (% (get-in parameters [:auth-header "url"]))
+        (% (get parameters "verb"))
+        (% (get parameters "url"))
         (clojure.string/join (% "&") (map join-as-string sorted-params))))))
