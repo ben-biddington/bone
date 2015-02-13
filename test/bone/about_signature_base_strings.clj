@@ -14,11 +14,6 @@
 
 (defn- %[what] (earl-encode what))
 
-(defn- p-name [what] (-> what %))
-(defn- p-value[what] (-> (if (nil? what) "" what) %))
-(defn- without-oauth[parameters]
-  (into {} (filter (fn[item] (not (.contains (name (key item)) "oauth"))) parameters)))
-
 (defn- extra-parameter-string[extra-parameters]
   (let [escaped (map (fn[item] ((str (name (key item)) (% "=") (val item)))) extra-parameters)]))
 
