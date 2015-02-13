@@ -34,7 +34,7 @@
 
 (defn- signature-base-string[parameters]
   (let [sorted-params (sort-by-key-and-value (white-list (:auth-header parameters)))]
-    (clojure.string/join (map join-as-string sorted-params))))
+    (clojure.string/join (%"&") (map join-as-string sorted-params))))
 
 (def example-parameters
   {:auth-header 
@@ -68,9 +68,7 @@
     "file"               "vacation.jpg"
     "size"               "original"})]
   (let [result (signature-base-string parameters)]
-    (println (:auth-header parameters))
-    (println (without-oauth (:auth-header parameters)))
-    (println (str "result: " result))
+    (is (= "file%3Dvacation.jpg%26oauth_consumer_key%3Ddpf43f3p2l4k3l03%26oauth_nonce%3Dkllo9940pd9333jh%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1191242096%26oauth_token%3Dnnch734d00sl2jdk%26oauth_version%3D1.0%26size%3Doriginal" result))
     ))
 )
 
