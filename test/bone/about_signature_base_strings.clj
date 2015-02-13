@@ -16,15 +16,17 @@
 
 (defn- q[what] (str "\"" what "\""))
 
+(defn- value[what] (q (% what)))
+
 (defn- signature-base-string[parameters]
   (str 
-   "oauth_consumer_key="      (% (-> parameters :auth-header :oauth-consumer-key))
-   "oauth_token="             (% (-> parameters :auth-header :oauth-token))
-   "oauth_signature_method="  (% (-> parameters :auth-header :oauth-signature-method))
-   "oauth_signature="         (% (-> parameters :auth-header :oauth-signature))
-   "oauth_timestamp="         (% (-> parameters :auth-header :oauth-timestamp))
-   "oauth_nonce="             (% (-> parameters :auth-header :oauth-nonce))
-   "oauth_version="           (q(% (-> parameters :auth-header :oauth-version)))
+   "oauth_consumer_key="      (value (-> parameters :auth-header :oauth-consumer-key))
+   "oauth_token="             (value (-> parameters :auth-header :oauth-token))
+   "oauth_signature_method="  (value (-> parameters :auth-header :oauth-signature-method))
+   "oauth_signature="         (value (-> parameters :auth-header :oauth-signature))
+   "oauth_timestamp="         (value (-> parameters :auth-header :oauth-timestamp))
+   "oauth_nonce="             (value (-> parameters :auth-header :oauth-nonce))
+   "oauth_version="           (value (-> parameters :auth-header :oauth-version))
    ))
 
 (def example-parameters
@@ -49,22 +51,22 @@
       (is (= false (.contains result "realm="))))
     
     (testing "that it includes :oauth_consumer_key"
-      (is (= true (.contains result "oauth_consumer_key=0685bd9184jfhq22"))))
+      (is (= true (.contains result "oauth_consumer_key=\"0685bd9184jfhq22\""))))
 
     (testing "that it includes :oauth_token"
-      (is (= true (.contains result "oauth_token=ad180jjd733klru7"))))
+      (is (= true (.contains result "oauth_token=\"ad180jjd733klru7\""))))
 
     (testing "that it includes :oauth_signature_method"
-      (is (= true (.contains result "oauth_signature_method=HMAC-SHA1"))))
+      (is (= true (.contains result "oauth_signature_method=\"HMAC-SHA1\""))))
 
     (testing "that it includes :oauth_signature"
-      (is (= true (.contains result "oauth_signature=wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D"))))
+      (is (= true (.contains result "oauth_signature=\"wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D\""))))
 
     (testing "that it includes :oauth_timestamp"
-      (is (= true (.contains result "oauth_timestamp=1423786932"))))
+      (is (= true (.contains result "oauth_timestamp=\"1423786932\""))))
 
     (testing "that it includes :oauth_nonce"
-      (is (= true (.contains result "oauth_nonce=4572616e48616d6d65724c61686176"))))
+      (is (= true (.contains result "oauth_nonce=\"4572616e48616d6d65724c61686176\""))))
 
     (testing "that it includes :oauth_version"
       (is (= true (.contains result "oauth_version=\"1.0\""))))
