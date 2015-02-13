@@ -84,6 +84,3 @@
   (let [result (signature-base-string (example-parameters-with { :oauth-version "" }))]
     (testing "for example a fictional empty oauth_version"
       (must-contain result "oauth_version%3D"))))
-
-;; TEST: parameters are separated by ampersands
-;; TEST: it EXCLUDES oauth_signature
