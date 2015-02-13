@@ -8,7 +8,8 @@
 (defn- sort-by-key-and-value[parameters] (into (sorted-map) parameters))
 
 (defn- join-as-string[param] (str (%(key param)) (% "=") (% (val param))))
-(defn- parameter-string[parameters] (map join-as-string parameters))
+(defn- name-value-string[parameters] (map join-as-string parameters))
+
 (def ^{:private true} ignored-parameter-names #{"realm" "oauth_signature"})
 
 (defn- blacklisted? [item] (contains? ignored-parameter-names (key item)))
@@ -24,4 +25,4 @@
       (list 
         (% (:verb args))
         (% (:url args))
-        (clojure.string/join url-encoded-ampersand (parameter-string sorted-params))))))
+        (clojure.string/join url-encoded-ampersand (name-value-string sorted-params))))))
