@@ -84,6 +84,5 @@
     (testing "for example a fictional oauth_version"
       (is (= true (.contains result "oauth_version=\"%2FOJI%20O9A2W5mFwDgiDvZbTSMK%2FPY%3D\"")) result ))))
 
-;; TEST: parameters are url encoded -- check some good corner cases
 ;; TEST: parameter values may be empty -- they must still be included
 ;;       + what about whitespace?
