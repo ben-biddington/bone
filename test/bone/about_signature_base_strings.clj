@@ -16,7 +16,11 @@
 
 (defn- q[what] (str "\"" what "\""))
 
-(defn- value[what] (q (% what)))
+(defn- value[what] 
+  (q (% (
+    if (nil? what) 
+    ""
+    what))))
 
 (defn- signature-base-string[parameters]
   (str 
@@ -42,6 +46,10 @@
     :oauth-version          "1.0"
     }
    })
+
+(defn- example-parameters-with[replacement-oauth-parameters]
+  (let [original-values (-> example-parameters :auth-header)]
+    {:auth-header (into original-values replacement-oauth-parameters)}))
 
 (def debug? (= "ON" (System/getenv "LOUD")))
 
@@ -69,10 +77,13 @@
       (is (= true (.contains result "oauth_nonce=\"4572616e48616d6d65724c61686176\""))))
 
     (testing "that it includes :oauth_version"
-      (is (= true (.contains result "oauth_version=\"1.0\""))))
+      (is (= true (.contains result "oauth_version=\"1.0\""))))))
 
-    ))
+(deftest request-parameter-values-are-parameter-encoded
+  (let [result (signature-base-string (example-parameters-with { :oauth-version "/OJI O9A2W5mFwDgiDvZbTSMK/PY=" }))]
+    (testing "for example a fictional oauth_version"
+      (is (= true (.contains result "oauth_version=\"%2FOJI%20O9A2W5mFwDgiDvZbTSMK%2FPY%3D\"")) result ))))
 
-;; TEST: parameters are url encoded
+;; TEST: parameters are url encoded -- check some good corner cases
 ;; TEST: parameter values may be empty -- they must still be included
 ;;       + what about whitespace?
