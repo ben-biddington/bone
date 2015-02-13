@@ -16,6 +16,7 @@
 (defn- white-list[parameters] (filter (complement blacklisted?) parameters))
 
 (def ^{:private true} ampersand "&")
+(def ^{:private true} url-encoded-ampersand (% "&"))
 
 (defn signature-base-string[args]
   (let [sorted-params (sort-by-key-and-value (white-list (:parameters args)))]
@@ -23,4 +24,4 @@
       (list 
         (% (:verb args))
         (% (:url args))
-        (clojure.string/join (% "&") (map join-as-string sorted-params))))))
+        (clojure.string/join url-encoded-ampersand (map join-as-string sorted-params))))))
