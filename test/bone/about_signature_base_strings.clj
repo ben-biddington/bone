@@ -16,8 +16,7 @@
 
 (defn- q[what] (str "\"" what "\""))
 
-(defn- value[what] 
-  (-> (if (nil? what) "" what) % q))
+(defn- value[what] (-> (if (nil? what) "" what) % q))
 
 (defn- signature-base-string[parameters]
   (str 
@@ -50,7 +49,7 @@
 
 (def debug? (= "ON" (System/getenv "LOUD")))
 
-(defn- must-contain[text expected] (is (.contains text expected)))
+(defn- must-contain[text expected] (is (.contains text expected) (str "Expected <" text  "> to include <" expected  ">")))
 
 (deftest normalizing-request-parameters
   (let [result (signature-base-string example-parameters)]
@@ -83,5 +82,9 @@
     (testing "for example a fictional oauth_version"
       (must-contain result "oauth_version=\"%2FOJI%20O9A2W5mFwDgiDvZbTSMK%2FPY%3D\""))))
 
-;; TEST: parameter values may be empty -- they must still be included
-;;       + what about whitespace?
+(deftest request-parameter-values-may-be-empty-and-are-still-included
+  (let [result (signature-base-string (example-parameters-with { :oauth-version "" }))]
+    (testing "for example a fictional empty oauth_version"
+      (must-contain result "oauth_version=\"\""))))
+
+;; TEST: parameters are separated by ampersands
