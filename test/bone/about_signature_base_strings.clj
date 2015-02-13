@@ -51,8 +51,8 @@
 
 (deftest normalizing-request-parameters
   (let [result (signature-base-string example-parameters)]
-    (testing "that it omits realm"
-      (is (= false (.contains result "realm="))))
+    (testing "that it exludes realm"
+      (must-not-contain result "realm%3D"))
     
     (testing "that it includes :oauth_consumer_key"
       (must-contain result "oauth_consumer_key%3D0685bd9184jfhq22"))
