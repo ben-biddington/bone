@@ -13,6 +13,8 @@
 (def example-parameters
   {:auth-header 
    {
+    "verb"                   "GET"
+    "url"                    "http://sp.example.com/" 
     "realm"                  "http://sp.example.com/" 
     "oauth_consumer_key"     "0685bd9184jfhq22"
     "oauth_token"            "ad180jjd733klru7"
@@ -32,9 +34,12 @@
 
 (defn- must-contain[text expected] (is (.contains text expected) (str "Expected <" text "> to include <" expected ">")))
 (defn- must-not-contain[text expected] (is (not (.contains text expected)) (str "Expected <" text "> to exclude <" expected ">")))
+(defn- must-equal[text expected] (is (= text expected) (str "Expected <" text "> to equal <" expected ">")))
 
 (deftest for-example ;; <http://oauth.net/core/1.0a/#sig_base_example>
-  (let [parameters (example-parameters-with { 
+  (let [parameters (example-parameters-with {
+    "verb"               "GET"
+    "url"                "http://photos.example.net/photos"
     "oauth_consumer_key" "dpf43f3p2l4k3l03" 
     "oauth_token"        "nnch734d00sl2jdk"
     "oauth_timestamp"    "1191242096"
@@ -43,9 +48,10 @@
     "size"               "original"})]
 
   (let [result (signature-base-string parameters)]
-    (is (= (str "file%3Dvacation.jpg%26oauth_consumer_key%3Ddpf43f3p2l4k3l03%26oauth_nonce%3Dkllo9940pd9333jh%26" 
+    (must-equal result (str "GET&http%3A%2F%2Fphotos.example.net%2Fphotos&"
+                "file%3Dvacation.jpg%26oauth_consumer_key%3Ddpf43f3p2l4k3l03%26oauth_nonce%3Dkllo9940pd9333jh%26" 
                 "oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1191242096%26oauth_token%3Dnnch734d00sl2jdk%26" 
-                "oauth_version%3D1.0%26size%3Doriginal") result)))))
+                "oauth_version%3D1.0%26size%3Doriginal")))))
 
 (deftest normalizing-request-parameters
   (let [result (signature-base-string example-parameters)]
@@ -85,3 +91,4 @@
 
 
 ;; TEST: parameters must be sorted by name AND value
+;; TEST: what about casing of VERB?
