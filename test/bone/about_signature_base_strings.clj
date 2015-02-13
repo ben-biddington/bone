@@ -1,7 +1,7 @@
 (ns bone.about-signature-base-strings
   (:import java.lang.String)
   (:require [clojure.test :refer :all]
-            [bone.core :refer :all]
+            [bone.signature-base-string :refer :all]
             [ring.util.codec :refer :all]))
 
 ; <http://oauth.net/core/1.0a/#anchor13>
@@ -9,22 +9,6 @@
 ;; The string is used as an input in hashing or signing algorithms. 
 ;; The HMAC-SHA1 signature method provides both a standard and an example of using the Signature Base String with a signing algorithm to generate signatures. 
 ;; All the request parameters MUST be encoded as described in Parameter Encoding;; prior to constructing the Signature Base String.
-
-(defn- %[what] (ring.util.codec/url-encode what))
-
-(defn- sort-by-key-and-value[parameters] (into (sorted-map) parameters))
-
-(defn- join-as-string[param] (str (%(key param)) (% "=") (% (val param))))
-
-(def ^{:private true} ignored-parameter-names #{"realm" "oauth_signature"})
-
-(defn- blacklisted? [item] (contains? ignored-parameter-names (key item)))
-
-(defn- white-list[parameters] (filter (complement blacklisted?) parameters))
-
-(defn- signature-base-string[parameters]
-  (let [sorted-params (sort-by-key-and-value (white-list (:auth-header parameters)))]
-    (clojure.string/join (% "&") (map join-as-string sorted-params))))
 
 (def example-parameters
   {:auth-header 

@@ -15,6 +15,6 @@
 
 (defn- white-list[parameters] (filter (complement blacklisted?) parameters))
 
-(defn- signature-base-string[parameters]
+(defn signature-base-string[parameters]
   (let [sorted-params (sort-by-key-and-value (white-list (:auth-header parameters)))]
     (clojure.string/join (% "&") (map join-as-string sorted-params))))
