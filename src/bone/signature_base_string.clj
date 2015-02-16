@@ -11,7 +11,7 @@
 (def ^{:private true} url-encoded-ampersand (% ampersand))
 (defn- param[name-and-value] (struct parameter (get name-and-value :name) (get name-and-value :value)))
 
-(defn- sort-by-key-and-value [parameters]       (sort-by :name parameters))
+(defn- sort-by-key-and-value [parameters]       (sort-by (juxt :name :value) parameters))
 (defn- join-as-string        [param]            (str (% (:name param)) (% "=") (% (:value param))))
 (defn- name-value-pairs      [parameters]       (map join-as-string parameters))
 (defn- blacklisted?          [item]             (contains? ignored-parameter-names (:name item)))
