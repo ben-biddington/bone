@@ -26,7 +26,7 @@
       (param "oauth_version"          "1.0"))
     })
 
-(defn- example-parameters-with[replacements] (into example-parameters replacements)) ;; does not seem to merge sub-maps
+(defn- example-parameters-with[replacements] (merge-with concat example-parameters replacements)) ;; does not seem to merge sub-maps
 
 (def debug? (= "ON" (System/getenv "LOUD")))
 
@@ -35,17 +35,18 @@
 (defn- must-equal[text expected] (is (= text expected) (str "Expected <" text "> to equal <" expected ">")))
 
 (deftest for-example ;; <http://oauth.net/core/1.0a/#sig_base_example>
-  (let [parameters (example-parameters-with {
+  (let [parameters {
+    :verb                      "GET"
     :url                       "http://photos.example.net/photos"
-    :parameters { 
-      "oauth_consumer_key"     "dpf43f3p2l4k3l03" 
-      "oauth_token"            "nnch734d00sl2jdk"
-      "oauth_timestamp"        "1191242096"
-      "oauth_nonce"            "kllo9940pd9333jh"
-      "oauth_signature_method" "HMAC-SHA1"
-      "oauth_version"          "1.0"
-      "file"                   "vacation.jpg"
-      "size"                   "original"}})]
+    :parameters (list 
+      (param "oauth_consumer_key"     "dpf43f3p2l4k3l03")
+      (param "oauth_token"            "nnch734d00sl2jdk")
+      (param "oauth_timestamp"        "1191242096")
+      (param "oauth_nonce"            "kllo9940pd9333jh")
+      (param "oauth_signature_method" "HMAC-SHA1")
+      (param "oauth_version"          "1.0")
+      (param "file"                   "vacation.jpg")
+      (param "size"                   "original"))}]
 
   (let [result (signature-base-string parameters)]
     (must-equal result (str "GET&http%3A%2F%2Fphotos.example.net%2Fphotos&"
@@ -80,20 +81,15 @@
       (must-contain result "oauth_version%3D1.0"))))
 
 (deftest request-parameter-values-are-parameter-encoded
-  (let [result (signature-base-string (example-parameters-with { :parameters {"oauth_version" "/OJI O9A2W5mFwDgiDvZbTSMK/PY=" }}))]
+  (let [input (example-parameters-with { :parameters (list (param "oauth_version" "/OJI O9A2W5mFwDgiDvZbTSMK/PY=")) })]
+    (let [result (signature-base-string input)]
     (testing "for example a fictional oauth_version"
-      (must-contain result "oauth_version%3D%2FOJI%20O9A2W5mFwDgiDvZbTSMK%2FPY%3D"))))
+      (must-contain result "oauth_version%3D%2FOJI%20O9A2W5mFwDgiDvZbTSMK%2FPY%3D")))))
 
 (deftest request-parameter-values-may-be-empty-and-are-still-included
-  (let [result (signature-base-string (example-parameters-with { "oauth_version" "" }))]
+  (let [result (signature-base-string (example-parameters-with { :parameters (list (param "oauth_version" "")) }))]
     (testing "for example a fictional empty oauth_version"
       (must-contain result "oauth_version%3D"))))
-
-(deftest you-can-have-lists-in-maps
-  (let [result { :url "http://xxx" :parameters (list (param "a" 1) (param "a" 2)) }]
-    (testing "a small example"
-      (is (= "a" (get (first (get result :parameters)) :name)))
-      )))
 
 
 ;; TEST: parameters must be sorted by name AND value
