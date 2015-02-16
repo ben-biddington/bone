@@ -8,7 +8,7 @@
 (defn- %[what] (if (nil? what) "" (ring.util.codec/url-encode what)))
 (def ^{:private true} ignored-parameter-names #{"realm" "oauth_signature"})
 (def ^{:private true} ampersand "&")
-(def ^{:private true} url-encoded-ampersand (% "&"))
+(def ^{:private true} url-encoded-ampersand (% ampersand))
 (defn- param[name-and-value] (struct parameter (get name-and-value :name) (get name-and-value :value)))
 
 (defn- sort-by-key-and-value [parameters]       (sort-by :name parameters))

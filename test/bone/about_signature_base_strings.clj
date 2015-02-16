@@ -91,6 +91,18 @@
     (testing "for example a fictional empty oauth_version"
       (must-contain result "oauth_version%3D"))))
 
+(deftest request-parameters-with-the-same-name-are-sorted-by-name-and-value
+  (let [parameters {
+    :verb                      "GET"
+    :url                       "http://photos.example.net/photos"
+    :parameters (list 
+      (param "f"                      "50")
+      (param "f"                      "25"))}]
+  
+  (let [result (signature-base-string parameters)]
+    (testing "for example (2) values for \"f\""
+      (must-contain result "f%3D25%26f%3D50")))))
 
+;; TEST: names and values must be strings (?)
 ;; TEST: parameters must be sorted by name AND value
 ;; TEST: what about casing of VERB?
