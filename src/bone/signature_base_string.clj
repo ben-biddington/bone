@@ -8,12 +8,14 @@
 (def ^{:private true} ampersand "&")
 (def ^{:private true} url-encoded-ampersand (% "&"))
 
-(defn- sort-by-key-and-value[parameters] (into (sorted-map) parameters))
-(defn- join-as-string[param] (str (%(key param)) (% "=") (% (val param))))
-(defn- name-value-pairs[parameters] (map join-as-string parameters))
-(defn- blacklisted? [item] (contains? ignored-parameter-names (key item)))
-(defn- white-list[parameters] (filter (complement blacklisted?) parameters))
-(defn- combine[name-value-pairs] (clojure.string/join url-encoded-ampersand name-value-pairs))
+(defn- sort-by-key-and-value [parameters]       (println (sort-by :name parameters)) (sort-by :name parameters))
+(defn- join-as-string        [param]            (str (% (:name param)) (% "=") (% (:value param))))
+(defn- name-value-pairs      [parameters]       (map join-as-string parameters))
+(defn- blacklisted?          [item]             (contains? ignored-parameter-names (key item)))
+(defn- white-list            [parameters]       (filter (complement blacklisted?) parameters))
+(defn- combine               [name-value-pairs] (clojure.string/join url-encoded-ampersand name-value-pairs))
+
+(defstruct parameter :name :value) 
 
 (defn signature-base-string[args]
     (clojure.string/join ampersand

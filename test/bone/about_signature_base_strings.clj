@@ -9,21 +9,22 @@
 ;; The string is used as an input in hashing or signing algorithms. 
 ;; The HMAC-SHA1 signature method provides both a standard and an example of using the Signature Base String with a signing algorithm to generate signatures. 
 ;; All the request parameters MUST be encoded as described in Parameter Encoding;; prior to constructing the Signature Base String.
+(defn param[name,value] (struct parameter name value))
 
 (def example-parameters
    {
     :verb                      "GET"
     :url                       "http://sp.example.com/" 
-    :parameters {
-      "realm"                  "http://sp.example.com/" 
-      "oauth_consumer_key"     "0685bd9184jfhq22"
-      "oauth_token"            "ad180jjd733klru7"
-      "oauth_signature_method" "HMAC-SHA1"
-      "oauth_signature"        "wOJIO9A2W5mFwDgiDvZbTSMK/PY="
-      "oauth_timestamp"        "1423786932"
-      "oauth_nonce"            "4572616e48616d6d65724c61686176"
-      "oauth_version"          "1.0"
-      }})
+    :parameters (list
+      (param "realm"                  "http://sp.example.com/")
+      (param "oauth_consumer_key"     "0685bd9184jfhq22")
+      (param "oauth_token"            "ad180jjd733klru7")
+      (param "oauth_signature_method" "HMAC-SHA1")
+      (param "oauth_signature"        "wOJIO9A2W5mFwDgiDvZbTSMK/PY=")
+      (param "oauth_timestamp"        "1423786932")
+      (param "oauth_nonce"            "4572616e48616d6d65724c61686176")
+      (param "oauth_version"          "1.0"))
+    })
 
 (defn- example-parameters-with[replacements] (into example-parameters replacements)) ;; does not seem to merge sub-maps
 
@@ -87,6 +88,12 @@
   (let [result (signature-base-string (example-parameters-with { "oauth_version" "" }))]
     (testing "for example a fictional empty oauth_version"
       (must-contain result "oauth_version%3D"))))
+
+(deftest you-can-have-lists-in-maps
+  (let [result { :url "http://xxx" :parameters (list (param "a" 1) (param "a" 2)) }]
+    (testing "a small example"
+      (is (= "a" (get (first (get result :parameters)) :name)))
+      )))
 
 
 ;; TEST: parameters must be sorted by name AND value
