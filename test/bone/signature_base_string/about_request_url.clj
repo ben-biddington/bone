@@ -30,6 +30,6 @@
         (must-not-contain result "%3A443")))
 
     (let [result (signature-base-string { :url "http://example.com:1337" })]
-      (testing "that it includes any other port, lke 1337 for example"
+      (testing "that it includes any other port, like 1337 for example"
         (must-contain result "http%3A%2F%2Fexample.com%3A1337"))))
 
