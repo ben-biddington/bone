@@ -26,6 +26,6 @@
     (clojure.string/join ampersand
       (list 
         (-> :verb       args %)
-        (-> :url        args  %)
+        (-> :url        args normalize-earl %)
         (-> :parameters args white-list sort-by-key-and-value name-value-pairs combine))))
 
