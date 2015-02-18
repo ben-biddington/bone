@@ -8,6 +8,7 @@
 
 (defn- %[what] (if (nil? what) "" (ring.util.codec/url-encode what)))
 (def ^{:private true} ignored-parameter-names #{"realm" "oauth_signature"})
+(def ^{:private true} ignored-ports #{80,443,-1})
 (def ^{:private true} ampersand "&")
 (def ^{:private true} url-encoded-ampersand (% ampersand))
 (defn- param[name-and-value] (struct parameter (get name-and-value :name) (get name-and-value :value)))
@@ -18,9 +19,13 @@
 (defn- blacklisted?          [item]             (contains? ignored-parameter-names (:name item)))
 (defn- white-list            [parameters]       (map param (filter (complement blacklisted?) parameters)))
 (defn- combine               [name-value-pairs] (clojure.string/join url-encoded-ampersand name-value-pairs))
+(defn- port-string           [uri]
+  (let [port (.getPort uri)]
+    (if (contains? ignored-ports port) "" (str ":" port))))
+
 (defn- normalize-earl        [url]
   (let [uri (URI. url)]
-    (str (clojure.string/lower-case (.getScheme uri)) "://" (.getHost uri) (.getPath uri))))
+    (str (clojure.string/lower-case (.getScheme uri)) "://" (.getHost uri) (port-string uri) (.getPath uri))))
 
 (defn signature-base-string[args]
     (clojure.string/join ampersand

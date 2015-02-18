@@ -115,8 +115,19 @@
       (testing "that it downcases the scheme"
         (must-not-contain result "HTTP")
         (must-contain     result "http"))
-    
+
+      (testing "that it omits port 80"
+        (must-not-contain result "80"))
+
     ))
+
+    (let [result (signature-base-string { :url "http://example.com:443" })]
+      (testing "that it omits port 443 (and the colon)"
+        (must-not-contain result "%3A443")))
+
+    (let [result (signature-base-string { :url "http://example.com:1337" })]
+      (testing "that it includes any other port, lke 1337 for example"
+        (must-contain result "http%3A%2F%2Fexample.com%3A1337")))
   )
 
 ;; TEST: names and values must be strings (?)
