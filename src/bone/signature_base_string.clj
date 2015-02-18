@@ -20,13 +20,12 @@
 (defn- combine               [name-value-pairs] (clojure.string/join url-encoded-ampersand name-value-pairs))
 (defn- normalize-earl        [url]
   (let [uri (URI. url)]
-    (str (.getScheme uri) "://" (.getHost uri) (.getPath uri))
-    ))
+    (str (.getScheme uri) "://" (.getHost uri) (.getPath uri))))
 
 (defn signature-base-string[args]
     (clojure.string/join ampersand
       (list 
         (-> :verb       args %)
-        (-> :url        args normalize-earl %)
+        (-> :url        args  %)
         (-> :parameters args white-list sort-by-key-and-value name-value-pairs combine))))
 

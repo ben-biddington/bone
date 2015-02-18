@@ -104,10 +104,15 @@
       (must-contain result "f%3D25%26f%3D50")))))
 
 (deftest request-url
-  (let [parameters {:url "HTTP://Example.com:80/resource?id=123" }]
+  (let [parameters {:url "HTTP://Example.com:80/resource#example-fragment?id=123" }]
     (let [result (signature-base-string parameters)]
-    (testing "that it EXCLUDES the query string entirely"
-      (must-not-contain result "resource%3Fid%3D123"))))
+      (testing "that it EXCLUDES the query string entirely"
+        (must-not-contain result "resource%3Fid%3D123"))
+      
+      (testing "that it EXCLUDES the fragment entirely"
+        (must-not-contain result "example-fragment"))
+    
+    ))
   )
 
 ;; TEST: names and values must be strings (?)
