@@ -17,7 +17,7 @@
       (param "oauth_signature"        "wOJIO9A2W5mFwDgiDvZbTSMK/PY=")
       (param "oauth_timestamp"        "1423786932")
       (param "oauth_nonce"            "4572616e48616d6d65724c61686176")
-     (param "oauth_version"          "1.0"))})
+      (param "oauth_version"          "1.0"))})
 
 (defn- example-parameters-with[replacements] (merge-with concat example-parameters replacements)) ;; does not seem to merge sub-maps
 
