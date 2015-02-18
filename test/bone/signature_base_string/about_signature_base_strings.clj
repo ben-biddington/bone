@@ -1,7 +1,8 @@
-(ns bone.about-signature-base-strings
+(ns bone.signature-base-string.about-signature-base-strings
   (:import java.lang.String)
   (:require [clojure.test :refer :all]
             [bone.signature-base-string :refer :all]
+            [bone.signature-base-string.support :refer :all]
             [ring.util.codec :refer :all]))
 
 ; <http://oauth.net/core/1.0a/#anchor13>
@@ -9,8 +10,6 @@
 ;; The string is used as an input in hashing or signing algorithms. 
 ;; The HMAC-SHA1 signature method provides both a standard and an example of using the Signature Base String with a signing algorithm to generate signatures. 
 ;; All the request parameters MUST be encoded as described in Parameter Encoding;; prior to constructing the Signature Base String.
-(defn param[name,value] (struct parameter name value))
-
 (def example-parameters
    {
     :verb                      "GET"
@@ -28,18 +27,11 @@
 
 (defn- example-parameters-with[replacements] (merge-with concat example-parameters replacements)) ;; does not seem to merge sub-maps
 
-(def debug? (= "ON" (System/getenv "LOUD")))
-
-(defn- must-contain[text expected] (is (.contains text expected) (str "Expected <" text "> to include <" expected ">")))
-(defn- must-not-contain[text expected] (is (not (.contains text expected)) (str "Expected <" text "> to exclude <" expected ">")))
-(defn- must-equal[text expected] (is (= text expected) (str "Expected <" text "> to equal <" expected ">")))
-
 (deftest request-verb 
   (let [result (signature-base-string { :verb "get" })]
       (testing "that it upper-cases verb"
         (must-not-contain result "get")
-        (must-contain result "GET"))) 
-  )
+        (must-contain result "GET"))))
 
 (deftest request-url
   (let [parameters {:url "HTTP://Example.com:80/resource#example-fragment?id=123" }]
@@ -138,6 +130,4 @@
     (testing "for example (2) values for \"f\""
       (must-contain result "f%3D25%26f%3D50")))))
 
-;; TEST: names and values must be strings (?)
-;; TEST: parameters must be sorted by name AND value
-;; TEST: what about casing of VERB?
+;; TEST: it concatenates with & even when pieces are empty, see section 9.1.3
