@@ -20,7 +20,7 @@
 (defn- combine               [name-value-pairs] (clojure.string/join url-encoded-ampersand name-value-pairs))
 (defn- normalize-earl        [url]
   (let [uri (URI. url)]
-    (str (.getScheme uri) "://" (.getHost uri) (.getPath uri))))
+    (str (clojure.string/lower-case (.getScheme uri)) "://" (.getHost uri) (.getPath uri))))
 
 (defn signature-base-string[args]
     (clojure.string/join ampersand

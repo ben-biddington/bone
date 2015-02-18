@@ -111,6 +111,10 @@
       
       (testing "that it EXCLUDES the fragment entirely"
         (must-not-contain result "example-fragment"))
+
+      (testing "that it downcases the scheme"
+        (must-not-contain result "HTTP")
+        (must-contain     result "http"))
     
     ))
   )
