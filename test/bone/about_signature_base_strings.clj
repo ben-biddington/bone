@@ -34,6 +34,36 @@
 (defn- must-not-contain[text expected] (is (not (.contains text expected)) (str "Expected <" text "> to exclude <" expected ">")))
 (defn- must-equal[text expected] (is (= text expected) (str "Expected <" text "> to equal <" expected ">")))
 
+(deftest request-url
+  (let [parameters {:url "HTTP://Example.com:80/resource#example-fragment?id=123" }]
+    (let [result (signature-base-string parameters)]
+      (testing "that it EXCLUDES the query string entirely"
+        (must-not-contain result "resource%3Fid%3D123"))
+      
+      (testing "that it EXCLUDES the fragment entirely"
+        (must-not-contain result "example-fragment"))
+
+      (testing "that it downcases the scheme"
+        (must-not-contain result "HTTP")
+        (must-contain     result "http"))
+
+      (testing "that it downcases the authority"
+        (must-not-contain result "Example.com")
+        (must-contain     result "example.com"))
+
+      (testing "that it omits port 80"
+        (must-not-contain result "80"))
+
+    ))
+
+    (let [result (signature-base-string { :url "http://example.com:443" })]
+      (testing "that it omits port 443 (and the colon)"
+        (must-not-contain result "%3A443")))
+
+    (let [result (signature-base-string { :url "http://example.com:1337" })]
+      (testing "that it includes any other port, lke 1337 for example"
+        (must-contain result "http%3A%2F%2Fexample.com%3A1337"))))
+
 (deftest for-example ;; <http://oauth.net/core/1.0a/#sig_base_example>
   (let [parameters {
     :verb                      "GET"
@@ -102,37 +132,6 @@
   (let [result (signature-base-string parameters)]
     (testing "for example (2) values for \"f\""
       (must-contain result "f%3D25%26f%3D50")))))
-
-(deftest request-url
-  (let [parameters {:url "HTTP://Example.com:80/resource#example-fragment?id=123" }]
-    (let [result (signature-base-string parameters)]
-      (testing "that it EXCLUDES the query string entirely"
-        (must-not-contain result "resource%3Fid%3D123"))
-      
-      (testing "that it EXCLUDES the fragment entirely"
-        (must-not-contain result "example-fragment"))
-
-      (testing "that it downcases the scheme"
-        (must-not-contain result "HTTP")
-        (must-contain     result "http"))
-
-      (testing "that it downcases the authority"
-        (must-not-contain result "Example.com")
-        (must-contain     result "example.com"))
-
-      (testing "that it omits port 80"
-        (must-not-contain result "80"))
-
-    ))
-
-    (let [result (signature-base-string { :url "http://example.com:443" })]
-      (testing "that it omits port 443 (and the colon)"
-        (must-not-contain result "%3A443")))
-
-    (let [result (signature-base-string { :url "http://example.com:1337" })]
-      (testing "that it includes any other port, lke 1337 for example"
-        (must-contain result "http%3A%2F%2Fexample.com%3A1337")))
-  )
 
 ;; TEST: names and values must be strings (?)
 ;; TEST: parameters must be sorted by name AND value
