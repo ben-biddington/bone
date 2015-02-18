@@ -27,12 +27,6 @@
 
 (defn- example-parameters-with[replacements] (merge-with concat example-parameters replacements)) ;; does not seem to merge sub-maps
 
-(deftest request-verb 
-  (let [result (signature-base-string { :verb "get" })]
-      (testing "that it upper-cases verb"
-        (must-not-contain result "get")
-        (must-contain result "GET"))))
-
 (deftest request-url
   (let [parameters {:url "HTTP://Example.com:80/resource#example-fragment?id=123" }]
     (let [result (signature-base-string parameters)]
