@@ -116,6 +116,10 @@
         (must-not-contain result "HTTP")
         (must-contain     result "http"))
 
+      (testing "that it downcases the authority"
+        (must-not-contain result "Example.com")
+        (must-contain     result "example.com"))
+
       (testing "that it omits port 80"
         (must-not-contain result "80"))
 
