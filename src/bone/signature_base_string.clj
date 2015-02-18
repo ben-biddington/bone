@@ -1,6 +1,7 @@
 (ns bone.signature-base-string
   (:gen-class)
   (:import java.lang.String)
+  (:import java.net.URI)
   (:require [ring.util.codec :refer :all]))
 
 (defstruct parameter :name :value) 
@@ -17,11 +18,15 @@
 (defn- blacklisted?          [item]             (contains? ignored-parameter-names (:name item)))
 (defn- white-list            [parameters]       (map param (filter (complement blacklisted?) parameters)))
 (defn- combine               [name-value-pairs] (clojure.string/join url-encoded-ampersand name-value-pairs))
+(defn- normalize-earl        [url]
+  (let [uri (URI. url)]
+    (str (.getScheme uri) "://" (.getHost uri) (.getPath uri))
+    ))
 
 (defn signature-base-string[args]
     (clojure.string/join ampersand
       (list 
         (-> :verb       args %)
-        (-> :url        args %)
+        (-> :url        args normalize-earl %)
         (-> :parameters args white-list sort-by-key-and-value name-value-pairs combine))))
 
