@@ -10,20 +10,6 @@
 ;; The string is used as an input in hashing or signing algorithms. 
 ;; The HMAC-SHA1 signature method provides both a standard and an example of using the Signature Base String with a signing algorithm to generate signatures. 
 ;; All the request parameters MUST be encoded as described in Parameter Encoding;; prior to constructing the Signature Base String.
-(def example-parameters
-   {
-    :verb                      "GET"
-    :url                       "http://sp.example.com/" 
-    :parameters (list
-      (param "realm"                  "http://sp.example.com/")
-      (param "oauth_consumer_key"     "0685bd9184jfhq22")
-      (param "oauth_token"            "ad180jjd733klru7")
-      (param "oauth_signature_method" "HMAC-SHA1")
-      (param "oauth_signature"        "wOJIO9A2W5mFwDgiDvZbTSMK/PY=")
-      (param "oauth_timestamp"        "1423786932")
-      (param "oauth_nonce"            "4572616e48616d6d65724c61686176")
-      (param "oauth_version"          "1.0"))
-    })
 
 (deftest for-example ;; <http://oauth.net/core/1.0a/#sig_base_example>
   (let [parameters {
