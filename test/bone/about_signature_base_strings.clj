@@ -34,6 +34,13 @@
 (defn- must-not-contain[text expected] (is (not (.contains text expected)) (str "Expected <" text "> to exclude <" expected ">")))
 (defn- must-equal[text expected] (is (= text expected) (str "Expected <" text "> to equal <" expected ">")))
 
+(deftest request-verb 
+  (let [result (signature-base-string { :verb "get" })]
+      (testing "that it upper-cases verb"
+        (must-not-contain result "get")
+        (must-contain result "GET"))) 
+  )
+
 (deftest request-url
   (let [parameters {:url "HTTP://Example.com:80/resource#example-fragment?id=123" }]
     (let [result (signature-base-string parameters)]
@@ -52,9 +59,7 @@
         (must-contain     result "example.com"))
 
       (testing "that it omits port 80"
-        (must-not-contain result "80"))
-
-    ))
+        (must-not-contain result "80"))))
 
     (let [result (signature-base-string { :url "http://example.com:443" })]
       (testing "that it omits port 443 (and the colon)"
