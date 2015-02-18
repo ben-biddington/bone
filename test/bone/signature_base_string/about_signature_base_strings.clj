@@ -1,4 +1,4 @@
-(ns bone.signature-base-string.about-signature-base-strings
+(ns bone.signature-base-string.example
   (:import java.lang.String)
   (:require [clojure.test :refer :all]
             [bone.signature-base-string :refer :all]
