@@ -16,7 +16,7 @@
               (.doFinal mac (.getBytes data)))
              "UTF-8")))
 
-(defn hmac-sha1-sign[base_string, secret])
+(defn hmac-sha1-sign[base_string, secret] (hmac base_string secret))
 
 (deftest signing-with-hmac-sha1
   (testing "for example"
