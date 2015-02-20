@@ -1,8 +1,5 @@
 (ns bone.signing.examples
   (:import java.lang.String)
-  (:import (javax.crypto Mac)
-           (javax.crypto.spec SecretKeySpec))
-
   (:require [clojure.test :refer :all] [bone.support :refer :all] [bone.signature :refer :all]))
 
 ;; http://oauth.net/core/1.0a/#signing_process
