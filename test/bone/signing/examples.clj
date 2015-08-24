@@ -20,13 +20,17 @@
       (must-equal "tR3+Ty81lMeYAr/Fid0kMTYa/WM=" result))))
 
 (def ^{:private true} credential
-     {:consumer-key "0685bd9184jfhq22" :consumer-secret "kd94hf93k423kf44"})
+     {:consumer-key "0685bd9184jfhq22" :consumer-secret "kd94hf93k423kf44" :token-key "ad180jjd733klru7"})
 
 (deftest creating-authorization-headers
   (let [opts {:url "http://photos.example.net/photos"}]
     (let [result (header/sign credential opts)]
       (println result)
     
-      (testing "it contains the consumer key"
-               (is (.contains result "oauth_consumer_key=\"0685bd9184jfhq22\""))
+      (testing "that it contains the consumer key"
+               (is (.contains result "oauth_consumer_key=\"0685bd9184jfhq22\"")))
+
+      (testing "that it contains the oauth token"
+               (is (.contains result "oauth_token=\"ad180jjd733klru7\""))
+
                ))))

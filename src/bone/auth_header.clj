@@ -26,4 +26,5 @@
     ;; make a base string
     ;; sign it
     ;; assemble header
-    (format "Authorization: OAuth, oauth_consumer_key=\"%s\"", (:consumer-key credential))))
+    (format "Authorization: OAuth, oauth_consumer_key=\"%s\", oauth_token=\"%s\"",
+            (:consumer-key credential) (:token-key credential))))
