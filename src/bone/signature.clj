@@ -3,7 +3,7 @@
   (:import (javax.crypto Mac)
            (javax.crypto.spec SecretKeySpec))
 
-  (:require [clojure.test :refer :all] [bone.support :refer :all]))
+  (:require [bone.support :refer :all]))
 
 ;; http://oauth.net/core/1.0a/#signing_process
 ;; HMAC-SHA1: http://oauth.net/core/1.0a/#RFC2104
