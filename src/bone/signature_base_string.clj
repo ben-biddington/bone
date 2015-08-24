@@ -1,12 +1,11 @@
 (ns bone.signature-base-string
-  (:gen-class)
   (:import java.lang.String)
   (:import java.net.URI)
-  (:require [ring.util.codec :refer :all]))
+  (:require [ring.util.codec :refer :all]
+            [bone.util :refer :all]))
 
 (defstruct parameter :name :value) 
 
-(defn- %[what] (if (nil? what) "" (ring.util.codec/url-encode what)))
 (def ^{:private true} ignored-parameter-names #{"realm" "oauth_signature"})
 (def ^{:private true} ignored-ports #{80,443,-1})
 (def ^{:private true} ampersand "&")

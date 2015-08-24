@@ -23,7 +23,8 @@
      {:consumer-key "0685bd9184jfhq22" :consumer-secret "kd94hf93k423kf44" :token-key "ad180jjd733klru7"})
 
 (deftest creating-authorization-headers
-  (let [opts {:url "http://photos.example.net/photos"}]
+  (let [opts {:url "http://photos.example.net/photos" :parameters { "file" "vacation.jpg" "size" "original"}}]
+    (println opts)
     (let [result (header/sign credential opts)]
       (println result)
     
