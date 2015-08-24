@@ -1,6 +1,10 @@
 (ns bone.util
   (:import java.lang.String)
   (:import java.net.URI)
-  (:require [ring.util.codec :refer :all]))
+  (:require [clj-http.util :refer :all :as http]))
 
-(defn %[what] (if (nil? what) "" (ring.util.codec/url-encode what)))
+(defn %[what] (if (nil? what) "" (http/url-encode what)))
+
+(defn fail[message & args]
+  (throw
+   (Exception. (apply format message args))))

@@ -20,21 +20,20 @@
       (must-equal "tR3+Ty81lMeYAr/Fid0kMTYa/WM=" result))))
 
 (def ^{:private true} credential
-     {:consumer-key "0685bd9184jfhq22" :consumer-secret "kd94hf93k423kf44" :token-key "ad180jjd733klru7"})
+     {
+      :consumer-key "dpf43f3p2l4k3l03" :consumer-secret "kd94hf93k423kf44"
+      :token-key    "nnch734d00sl2jdk" :token-secret    "pfkkdhi9sl3r4s00"})
 
 (deftest creating-authorization-headers
-  (let [opts {:url "http://photos.example.net/photos" :parameters { "file" "vacation.jpg" "size" "original"}}]
-    (println opts)
+  (let [opts {:verb "GET" :url "http://photos.example.net/photos" :parameters { "file" "vacation.jpg" "size" "original"}}]
     (let [result (header/sign credential opts)]
-      (println result)
-    
       (testing "that it contains the consumer key"
-               (is (.contains result "oauth_consumer_key=\"0685bd9184jfhq22\"")))
+               (is (.contains result "oauth_consumer_key=\"dpf43f3p2l4k3l03\"")))
 
       (testing "that it contains the oauth token"
-               (is (.contains result "oauth_token=\"ad180jjd733klru7\"")))
+               (is (.contains result "oauth_token=\"nnch734d00sl2jdk\"")))
 
       (testing "that it contains the signature"
-               (is (.contains result "oauth_signature=\"wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D\"")))
+               (is (.contains result "oauth_signature=\"tR3%2BTy81lMeYAr%2FFid0kMTYa%2FWM%3D\"")))
 
       )))
