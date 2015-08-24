@@ -11,7 +11,7 @@
   (let [[name value] hash]
     (struct parameter name value)))
 
-(defn- params-for[verb url ts parameters credential]
+(defn- params-for[verb url ts nonce parameters credential]
   {
    :verb                      (or verb (fail ":verb is required"))
    :url                       (or url (fail ":url is required"))
@@ -20,7 +20,7 @@
                  (param "oauth_consumer_key"     (:consumer-key credential))
                  (param "oauth_token"            (:token-key credential))
                  (param "oauth_timestamp"        (or ts (fail "timestamp is required")))
-                 (param "oauth_nonce"            "kllo9940pd9333jh")
+                 (param "oauth_nonce"            (or nonce (fail "nonce is required")))
                  (param "oauth_signature_method" "HMAC-SHA1")
                  (param "oauth_version"          "1.0"))
                 (map to-param parameters))})
@@ -29,12 +29,13 @@
   (format "%s&%s" (% (:consumer-secret credential)) (% (:token-secret credential))))
 
 (defn sign[credential opts]
-  (let [{url :url verb :verb parameters :parameters timestamp-fn :timestamp-fn} opts]
-    (let [ts (str (apply timestamp-fn []))]
-      (let [base-string (signature-base-string (params-for verb url ts parameters credential))]
+  (let [{url :url verb :verb parameters :parameters timestamp-fn :timestamp-fn nonce-fn :nonce-fn} opts]
+    (let [ts (str (apply timestamp-fn [])) nonce (str (apply nonce-fn []))]
+      (let [base-string (signature-base-string (params-for verb url ts nonce parameters credential))]
         (let [signature (hmac-sha1-sign base-string (secret credential))]
-          (format "Authorization: OAuth, oauth_consumer_key=\"%s\", oauth_token=\"%s\", oauth_signature_method=\"HMAC-SHA1\", oauth_signature=\"%s\", oauth_timestamp=\"%s\"",
+          (format "Authorization: OAuth, oauth_consumer_key=\"%s\", oauth_token=\"%s\", oauth_signature_method=\"HMAC-SHA1\", oauth_signature=\"%s\", oauth_timestamp=\"%s\", oauth_nonce=\"%s\"",
                   (% (:consumer-key credential))
                   (% (:token-key credential))
                   (% signature)
-                  (% ts)))))))
+                  (% ts)
+                  (% nonce)))))))

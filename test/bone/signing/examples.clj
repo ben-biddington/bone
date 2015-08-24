@@ -25,9 +25,9 @@
       :token-key    "nnch734d00sl2jdk" :token-secret    "pfkkdhi9sl3r4s00"})
 
 (deftest creating-authorization-headers
-  (let [opts {:verb "GET" :url "http://photos.example.net/photos" :parameters { "file" "vacation.jpg" "size" "original"} :timestamp-fn (fn[] 1191242096)}]
+  (let [opts {:verb "GET" :url "http://photos.example.net/photos" :parameters { "file" "vacation.jpg" "size" "original"} :timestamp-fn (fn[] 1191242096) :nonce-fn (fn[] "kllo9940pd9333jh")}]
     (let [result (header/sign credential opts)]
-      (println result)
+
       (testing "that it contains the consumer key"
                (is (.contains result "oauth_consumer_key=\"dpf43f3p2l4k3l03\"")))
 
@@ -46,4 +46,7 @@
       (testing "that it contains the timestamp"
                (is (.contains result "oauth_timestamp=\"1191242096\"")))
 
+      (testing "that it contains the nonce"
+               (is (.contains result "oauth_nonce=\"kllo9940pd9333jh\"")))
+      
       )))
