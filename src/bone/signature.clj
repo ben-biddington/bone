@@ -1,9 +1,7 @@
 (ns bone.signature
   (:import java.lang.String)
   (:import (javax.crypto Mac)
-           (javax.crypto.spec SecretKeySpec))
-
-  (:require [bone.support :refer :all]))
+           (javax.crypto.spec SecretKeySpec)))
 
 ;; http://oauth.net/core/1.0a/#signing_process
 ;; HMAC-SHA1: http://oauth.net/core/1.0a/#RFC2104
