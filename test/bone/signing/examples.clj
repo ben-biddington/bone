@@ -1,6 +1,9 @@
 (ns bone.signing.examples
   (:import java.lang.String)
-  (:require [clojure.test :refer :all] [bone.support :refer :all] [bone.signature :refer :all]))
+  (:require [clojure.test :refer :all]
+            [bone.support :refer :all]
+            [bone.signature :refer :all]
+            [bone.auth-header :refer :all :as header]))
 
 ;; http://oauth.net/core/1.0a/#signing_process
 ;; HMAC-SHA1: http://oauth.net/core/1.0a/#RFC2104
@@ -15,3 +18,15 @@
           result (hmac-sha1-sign signature-base-string secret)]
 
       (must-equal "tR3+Ty81lMeYAr/Fid0kMTYa/WM=" result))))
+
+(def ^{:private true} credential
+     {:consumer-key "0685bd9184jfhq22" :consumer-secret "kd94hf93k423kf44"})
+
+(deftest creating-authorization-headers
+  (let [opts {:url "http://photos.example.net/photos"}]
+    (let [result (header/sign credential opts)]
+      (println result)
+    
+      (testing "it contains the consumer key"
+               (is (.contains result "oauth_consumer_key=\"0685bd9184jfhq22\""))
+               ))))
