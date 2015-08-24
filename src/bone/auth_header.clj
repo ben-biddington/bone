@@ -32,7 +32,7 @@
   (let [{url :url verb :verb parameters :parameters} opts]
     (let [base-string (signature-base-string (params-for verb url parameters credential))]
       (let [signature (hmac-sha1-sign base-string (secret credential))]
-        (format "Authorization: OAuth, oauth_consumer_key=\"%s\", oauth_token=\"%s\", oauth_signature=\"%s\"",
+        (format "Authorization: OAuth, oauth_consumer_key=\"%s\", oauth_token=\"%s\", oauth_signature_method=\"HMAC-SHA1\", oauth_signature=\"%s\"",
                 (% (:consumer-key credential))
                 (% (:token-key credential))
                 (% signature))))))
