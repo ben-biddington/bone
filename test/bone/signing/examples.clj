@@ -31,6 +31,9 @@
                (is (.contains result "oauth_consumer_key=\"0685bd9184jfhq22\"")))
 
       (testing "that it contains the oauth token"
-               (is (.contains result "oauth_token=\"ad180jjd733klru7\""))
+               (is (.contains result "oauth_token=\"ad180jjd733klru7\"")))
 
-               ))))
+      (testing "that it contains the signature"
+               (is (.contains result "oauth_signature=\"wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D\"")))
+
+      )))
