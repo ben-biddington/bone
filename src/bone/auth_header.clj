@@ -30,6 +30,9 @@
 
 (defn- nonce-and-timestamp[opts]
   (let [{timestamp-fn :timestamp-fn nonce-fn :nonce-fn} opts]
+    (when (nil? timestamp-fn) (fail "timestamp-fn is required (it is a function that returns timestamps)"))
+    (when (nil? nonce-fn) (fail "nonce-fn is required (it is a function that returns nonces)"))
+
     {:nonce (str (apply nonce-fn [])) :timestamp (str (apply timestamp-fn []))}))
 
 (defn sign[credential opts]
