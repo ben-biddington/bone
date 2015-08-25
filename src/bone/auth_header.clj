@@ -11,7 +11,7 @@
   (let [[name value] hash]
     (struct parameter name value)))
 
-(defn- params-for[verb url ts nonce parameters credential]
+(defn- params-for[verb url timestamp nonce parameters credential]
   {
    :verb                      (or verb (fail ":verb is required"))
    :url                       (or url (fail ":url is required"))
@@ -19,7 +19,7 @@
                 (list
                  (param "oauth_consumer_key"     (:consumer-key credential))
                  (param "oauth_token"            (:token-key credential))
-                 (param "oauth_timestamp"        (or ts (fail "timestamp is required")))
+                 (param "oauth_timestamp"        (or timestamp (fail "timestamp is required")))
                  (param "oauth_nonce"            (or nonce (fail "nonce is required")))
                  (param "oauth_signature_method" "HMAC-SHA1")
                  (param "oauth_version"          "1.0"))
@@ -28,13 +28,17 @@
 (defn- secret[credential]
   (format "%s&%s" (% (:consumer-secret credential)) (% (:token-secret credential))))
 
+(defn- nonce-and-timestamp[opts]
+  (let [{timestamp-fn :timestamp-fn nonce-fn :nonce-fn} opts]
+    {:nonce (str (apply nonce-fn [])) :timestamp (str (apply timestamp-fn []))}))
+
 (defn sign[credential opts]
   (let [{url :url verb :verb parameters :parameters timestamp-fn :timestamp-fn nonce-fn :nonce-fn} opts]
-    (let [ts (str (apply timestamp-fn [])) nonce (str (apply nonce-fn []))]
-      (let [signature (hmac-sha1-sign (signature-base-string (params-for verb url ts nonce parameters credential)) (secret credential))]
+    (let [{nonce :nonce timestamp :timestamp} (nonce-and-timestamp opts)]
+      (let [signature (hmac-sha1-sign (signature-base-string (params-for verb url timestamp nonce parameters credential)) (secret credential))]
         (format "Authorization: OAuth, oauth_consumer_key=\"%s\", oauth_token=\"%s\", oauth_signature_method=\"HMAC-SHA1\", oauth_signature=\"%s\", oauth_timestamp=\"%s\", oauth_nonce=\"%s\"",
                 (% (:consumer-key credential))
                 (% (:token-key credential))
                 (% signature)
-                (% ts)
+                (% timestamp)
                 (% nonce))))))
