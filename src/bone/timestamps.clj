@@ -1,3 +1,4 @@
-(ns bone.timestamps)
+(ns bone.timestamps
+  (:refer-clojure :exclude [next]))
 
-(defn next[] (System/currentTimeMillis / 1000L))
+(defn next[] (quot (System/currentTimeMillis) 1000))
