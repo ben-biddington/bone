@@ -33,11 +33,11 @@
     (when (nil? timestamp-fn) (fail "timestamp-fn is required (it is a function that returns timestamps)"))
     (when (nil? nonce-fn) (fail "nonce-fn is required (it is a function that returns nonces)"))
 
-    {:nonce (str (apply nonce-fn [])) :timestamp (str (apply timestamp-fn []))}))
+    [(str (apply nonce-fn [])) (str (apply timestamp-fn []))]))
 
 (defn sign[credential opts]
   (let [{url :url verb :verb parameters :parameters timestamp-fn :timestamp-fn nonce-fn :nonce-fn} opts]
-    (let [{nonce :nonce timestamp :timestamp} (nonce-and-timestamp opts)]
+    (let [[nonce timestamp] (nonce-and-timestamp opts)]
       (let [signature (hmac-sha1-sign (signature-base-string (params-for verb url timestamp nonce parameters credential)) (secret credential))]
         (format "Authorization: OAuth, oauth_consumer_key=\"%s\", oauth_token=\"%s\", oauth_signature_method=\"HMAC-SHA1\", oauth_signature=\"%s\", oauth_timestamp=\"%s\", oauth_nonce=\"%s\"",
                 (% (:consumer-key credential))
