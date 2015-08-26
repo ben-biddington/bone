@@ -6,6 +6,8 @@
 
 (defstruct parameter :name :value) 
 
+(defn param[name,value] (struct parameter name value))
+
 (def ^{:private true} ignored-parameter-names #{"realm" "oauth_signature"})
 (def ^{:private true} ignored-ports #{80,443,-1})
 (def ^{:private true} ampersand "&")

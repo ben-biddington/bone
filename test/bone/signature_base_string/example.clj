@@ -3,8 +3,9 @@
   (:require [clojure.test :refer :all]
             [bone.signature-base-string :refer :all]
             [bone.support :refer :all]
-            [bone.signature-base-string.support :refer :all]
             [ring.util.codec :refer :all]))
+
+(defn param[name,value] (struct parameter name value))
 
 ; <http://oauth.net/core/1.0a/#anchor13>
 ;; The Signature Base String is a consistent reproducible concatenation of the request elements into a single string. 

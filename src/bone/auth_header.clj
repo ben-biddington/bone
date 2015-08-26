@@ -1,12 +1,13 @@
 (ns bone.auth-header
   (:require [bone.util :refer :all]
             [bone.signature :refer :all]
-            [bone.signature-base-string :refer :all]
-            [bone.signature-base-string.support :refer :all]))
+            [bone.signature-base-string :refer :all]))
 
 (defn- to-param[hash]
   (let [[name value] hash]
     (struct parameter name value)))
+
+(defn- param[name,value] (struct parameter name value))
 
 (defn- params-for[verb url timestamp nonce parameters credential]
   {

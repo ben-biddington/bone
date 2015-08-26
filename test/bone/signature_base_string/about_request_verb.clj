@@ -3,7 +3,6 @@
   (:require [clojure.test :refer :all]
             [bone.signature-base-string :refer :all]
             [bone.support :refer :all]
-            [bone.signature-base-string.support :refer :all]
             [ring.util.codec :refer :all]))
 
 (deftest request-verb 
