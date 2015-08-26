@@ -1,9 +1,6 @@
 (ns bone.auth-header
-  (:require [clojure.test :refer :all]
-            [bone.support :refer :all]
-            [bone.util :refer :all]
+  (:require [bone.util :refer :all]
             [bone.signature :refer :all]
-            [bone.auth-header :refer :all]
             [bone.signature-base-string :refer :all]
             [bone.signature-base-string.support :refer :all]))
 
