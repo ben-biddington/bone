@@ -28,6 +28,9 @@
   (let [opts {:verb "GET" :url "http://photos.example.net/photos" :parameters { "file" "vacation.jpg" "size" "original"} :timestamp-fn (fn[] 1191242096) :nonce-fn (fn[] "kllo9940pd9333jh")}]
     (let [result (header/sign credential opts)]
 
+      (testing "that is conforms to the right pattern -- starts with 'OAuth'"
+               (is (not (nil? (re-matches #"^OAuth.+" result)))))
+      
       (testing "that it contains the consumer key"
                (is (.contains result "oauth_consumer_key=\"dpf43f3p2l4k3l03\"")))
 
@@ -48,5 +51,8 @@
 
       (testing "that it contains the nonce"
                (is (.contains result "oauth_nonce=\"kllo9940pd9333jh\"")))
+
+      (testing "that it contains the version"
+               (is (.contains result "oauth_version=\"1.0\"")))
       
       )))
