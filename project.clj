@@ -1,4 +1,4 @@
-(defproject bone "0.5.0-SNAPSHOT"
+(defproject bone "0.6.0-SNAPSHOT"
   :description "Simple OAuth for clojure"
   :url "https://github.com/ben-biddington/bone"
   :license {:name "Eclipse Public License"
