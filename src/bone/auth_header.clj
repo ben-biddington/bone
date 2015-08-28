@@ -28,8 +28,8 @@
 
 (defn- nonce-and-timestamp[opts]
   (let [{timestamp-fn :timestamp-fn nonce-fn :nonce-fn} opts]
-    (when (nil? timestamp-fn) (fail "timestamp-fn is required (it is a function that returns timestamps)"))
-    (when (nil? nonce-fn) (fail "nonce-fn is required (it is a function that returns nonces)"))
+    (when-nil timestamp-fn #(fail "timestamp-fn is required (it is a function that returns timestamps)"))
+    (when-nil nonce-fn #(fail "nonce-fn is required (it is a function that returns nonces)"))
 
     [(str (apply nonce-fn [])) (str (apply timestamp-fn []))]))
 

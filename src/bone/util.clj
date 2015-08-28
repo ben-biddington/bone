@@ -8,3 +8,7 @@
 (defn fail[message & args]
   (throw
    (Exception. (apply format message args))))
+
+(defn when-nil[what do-this]
+  (when (nil? what)
+    (do-this)))

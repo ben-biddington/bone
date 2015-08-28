@@ -37,12 +37,9 @@
       (testing "that it contains the oauth token"
                (is (.contains result "oauth_token=\"nnch734d00sl2jdk\"")))
 
-      (testing "that it contains the signature"
+      (testing "that it contains the signature method"
                (is (.contains result "oauth_signature_method=\"HMAC-SHA1\"")))
       
-      (testing "that it contains the signature"
-               (is (.contains result "oauth_signature=\"tR3%2BTy81lMeYAr%2FFid0kMTYa%2FWM%3D\"")))
-
       (testing "that it contains the signature"
                (is (.contains result "oauth_signature=\"tR3%2BTy81lMeYAr%2FFid0kMTYa%2FWM%3D\"")))
 
