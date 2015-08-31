@@ -16,11 +16,11 @@
 (defn- down-case             [what] (clojure.string/lower-case (if (nil? what) "" what)))
 (defn- up-case               [what] (clojure.string/upper-case (if (nil? what) "" what)))
 (defn- sort-by-key-and-value [parameters]       (sort-by (juxt :name :value) parameters))
-(defn- join-as-string        [param]            (str (% (:name param)) (% "=") (% (:value param))))
+(defn- join-as-string        [param]            (str (-> param :name %) "=" (-> param :value %)))
 (defn- name-value-pairs      [parameters]       (map join-as-string parameters))
 (defn- blacklisted?          [item]             (contains? ignored-parameter-names (:name item)))
 (defn- white-list            [parameters]       (map param (filter (complement blacklisted?) parameters)))
-(defn- combine               [name-value-pairs] (clojure.string/join url-encoded-ampersand name-value-pairs))
+(defn- combine               [name-value-pairs] (clojure.string/join ampersand name-value-pairs))
 
 (defn- port-string           [uri]
   (let [port (.getPort uri)]
@@ -37,5 +37,5 @@
       (list 
         (-> :verb       args up-case %)
         (-> :url        args normalize-earl %)
-        (-> :parameters args white-list sort-by-key-and-value name-value-pairs combine))))
+        (-> :parameters args white-list sort-by-key-and-value name-value-pairs combine %))))
 

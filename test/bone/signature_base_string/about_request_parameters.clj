@@ -50,11 +50,11 @@
     (testing "that it includes :oauth_version"
       (must-contain result "oauth_version%3D1.0"))))
 
-(deftest request-parameter-values-are-parameter-encoded
+(deftest request-parameter-values-are-parameter-encoded-twice-in-fact
   (let [input (example-parameters-with { :parameters (list (param "oauth_version" "a+b/=c")) })]
     (let [result (signature-base-string input)]
-    (testing "for example a fictional oauth_version"
-      (must-contain result "oauth_version%3Da%2Bb%2F%3Dc")))))
+      (testing "for example a fictional oauth_version"
+               (must-contain result "oauth_version%3Da%252Bb%252F%253Dc")))))
 
 (deftest request-parameter-values-may-be-empty-and-are-still-included
   (let [result (signature-base-string (example-parameters-with { :parameters (list (param "oauth_version" "")) }))]

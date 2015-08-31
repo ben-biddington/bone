@@ -28,10 +28,27 @@
       (param "size"                   "original"))}]
 
   (let [result (signature-base-string parameters)]
-    (must-equal result (str "GET&http%3A%2F%2Fphotos.example.net%2Fphotos&"
+    (must-equal result (str
+                "GET&http%3A%2F%2Fphotos.example.net%2Fphotos&"
                 "file%3Dvacation.jpg%26oauth_consumer_key%3Ddpf43f3p2l4k3l03%26oauth_nonce%3Dkllo9940pd9333jh%26" 
                 "oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1191242096%26oauth_token%3Dnnch734d00sl2jdk%26" 
                 "oauth_version%3D1.0%26size%3Doriginal")))))
+
+(deftest parameter-values-are-encoded-before-assembly
+  (let [parameters {
+    :verb                      "GET"
+    :url                       "http://xxx"
+    :parameters (list 
+      (param "oauth_consumer_key"     "key")
+      (param "oauth_timestamp"        "1441060716")
+      (param "oauth_nonce"            "ad64a1e84bc1f9612679ee14d6d612f9")
+      (param "oauth_signature_method" "HMAC-SHA1")
+      (param "oauth_version"          "1.0")
+      (param "track"                  "lazyweb,kanye")
+      )}]
+
+  (let [result (signature-base-string parameters)]
+    (must-equal result "GET&http%3A%2F%2Fxxx&oauth_consumer_key%3Dkey%26oauth_nonce%3Dad64a1e84bc1f9612679ee14d6d612f9%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1441060716%26oauth_version%3D1.0%26track%3Dlazyweb%252Ckanye"))))
 
 
 ;; TEST: it concatenates with & even when pieces are empty, see section 9.1.3
