@@ -35,12 +35,15 @@
 
 (defn sign[credential opts]
   (let [{url :url verb :verb parameters :parameters timestamp-fn :timestamp-fn nonce-fn :nonce-fn} opts]
-    (let [[nonce timestamp] (nonce-and-timestamp opts)]
-      (let [signature (hmac-sha1-sign (signature-base-string (params-for verb url timestamp nonce parameters credential)) (secret credential))]
-        (format "OAuth oauth_consumer_key=\"%s\", oauth_token=\"%s\", oauth_signature_method=\"HMAC-SHA1\", oauth_signature=\"%s\", oauth_timestamp=\"%s\", oauth_nonce=\"%s\", oauth_version=\"%s\"",
-                (% (:consumer-key credential))
-                (% (:token-key credential))
-                (% signature)
-                (% timestamp)
-                (% nonce)
-                "1.0")))))
+    (let [log (or (:log opts) (fn[args & rest]))]
+      (let [[nonce timestamp] (nonce-and-timestamp opts)]
+        (let [signature-base-string (signature-base-string (params-for verb url timestamp nonce parameters credential))]
+          (log (format "signature-base-string: %s" signature-base-string))
+          (let [signature (hmac-sha1-sign signature-base-string (secret credential))]
+            (format "OAuth oauth_consumer_key=\"%s\", oauth_token=\"%s\", oauth_signature_method=\"HMAC-SHA1\", oauth_signature=\"%s\", oauth_timestamp=\"%s\", oauth_nonce=\"%s\", oauth_version=\"%s\"",
+                    (% (:consumer-key credential))
+                    (% (:token-key credential))
+                    (% signature)
+                    (% timestamp)
+                    (% nonce)
+                    "1.0")))))))

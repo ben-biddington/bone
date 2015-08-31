@@ -2,7 +2,8 @@
   (:import java.lang.String)
   (:require [clojure.test :refer :all]
             [bone.signature-base-string :refer :all]
-            [bone.support :refer :all]            
+            [bone.support :refer :all]
+            [bone.util :refer :all]
             [ring.util.codec :refer :all]))
 
 (defn param[name,value] (struct parameter name value))
